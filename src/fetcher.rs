@@ -147,7 +147,7 @@ async fn push_updates<I: IntoIterator<Item = i64>>(
         'retry: for _ in 0..3 {
             match bot
                 .send_message(tbot::types::chat::Id(subscriber), msg)
-                .web_page_preview(WebPagePreviewState::Disabled)
+                // .web_page_preview(WebPagePreviewState::Disabled)  Finall: Enable web preview
                 .call()
                 .await
             {
