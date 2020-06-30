@@ -116,6 +116,16 @@ sed -i "s/,]/]/g" $TARGET
 
 需要注意的是已推送的 RSS 记录不会保留, 如果直接使用转换后的数据库, 会重复推送旧的 RSS
 
+## Finall 版本说明
+
+相比原版本，本分支版本的特性：
+- 允许为群组添加订阅。
+- 更改推送行为，一条消息只推送一条 Feed。
+- 如果 RSS 源同时更新大量相同的 Feed，只抓取其中一条。
+- 放宽 database 规模限制。
+
+这些特性主要为配合 [RSSHub](https://github.com/DIYgod/RSSHub) 等爬虫型 RSS 使用而准备。例如，RSSHub 的 Twitter 源在某条推特有大量转发时会大量重复抓取，若使用原版本，就会推送大量重复内容；另外，如果订阅了较活跃的话题，也容易出现重复的旧内容。
+
 ## License
 
 This is free and unencumbered software released into the public domain.
