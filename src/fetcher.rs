@@ -91,9 +91,14 @@ async fn fetch_and_push_updates(
     let updates = db.lock().unwrap().update(&feed.link, new_feed);
     for update in updates {
         match update {
-            FeedUpdate::Items(items) => {
-                let msgs =
-                    format_large_msg(format!("<b>{}</b>", Escape(&feed.title)), &items, |item| {
+            // 修改推送行为：每次只推送一条 Feed
+            FeedUpdate::Item(item) => {
+                let mut item_vec = Vec::new();
+                item_vec.push(item);
+                let msgs = format_large_msg(
+                    format!("<b>{}</b>", Escape(&feed.title)),
+                    &item_vec,
+                    |item| {
                         let title = item
                             .title
                             .as_ref()
@@ -105,7 +110,8 @@ async fn fetch_and_push_updates(
                             .map(|s| s.as_str())
                             .unwrap_or_else(|| &feed.link);
                         format!("<a href=\"{}\">{}</a>", Escape(link), Escape(title))
-                    });
+                    },
+                );
                 for msg in msgs {
                     push_updates(
                         &bot,

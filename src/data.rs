@@ -242,15 +242,19 @@ impl Database {
         let items_len = new_feed.items.len();
         for item in new_feed.items {
             let hash = gen_item_hash(&item);
-            if !feed.hash_list.contains(&hash) {
+            // &&: 解决大量相同内容同时更新时重复推送问题
+            if !feed.hash_list.contains(&hash) && !new_hash_list.contains(&hash) {
                 new_hash_list.push(hash);
                 new_items.push(item);
             }
         }
         if !new_items.is_empty() {
-            updates.push(FeedUpdate::Items(new_items));
-
-            let max_size = items_len * 2;
+            // updates.push(FeedUpdate::Items(new_items));
+            for item in new_items {
+                updates.push(FeedUpdate::Item(item));
+            }
+            // *2 -> *5 -> *10：尝试减少重复内容
+            let max_size = items_len * 10;
             let mut append: Vec<u64> = feed
                 .hash_list
                 .iter()
@@ -286,7 +290,8 @@ impl Database {
 }
 
 pub enum FeedUpdate {
-    Items(Vec<feed::Item>),
+    // 修改推送行为：每次只推送一条 Feed
+    Item(feed::Item),
     Title(String),
 }
 

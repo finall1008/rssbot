@@ -325,15 +325,16 @@ async fn check_channel_permission(
         }
         other => other?,
     };
-    if !chat.kind.is_channel() {
-        update_response(
-            bot,
-            target,
-            parameters::Text::plain(tr!("target_must_be_a_channel")),
-        )
-        .await?;
-        return Ok(None);
-    }
+    // 允许为群组订阅
+    // if !chat.kind.is_channel() {
+    //     update_response(
+    //         bot,
+    //         target,
+    //         parameters::Text::plain(tr!("target_must_be_a_channel")),
+    //     )
+    //     .await?;
+    //     return Ok(None);
+    // }
     let admins = match bot.get_chat_administrators(channel_id).call().await {
         Err(MethodCall::RequestError {
             description,
